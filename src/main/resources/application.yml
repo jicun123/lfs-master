@@ -1,0 +1,125 @@
+server:
+  port: 8919
+spring:
+  servlet:
+    multipart:
+      enabled: true
+      max-file-size: 2048MB
+      max-request-size: 2048MB
+  datasource:
+    url: jdbc:mysql://127.0.0.1:3306/lfs?characterEncoding=utf8&zeroDateTimeBehavior=convertToNull&allowMultiQueries=true
+    username: root
+    password: 123456
+    driverClassName: com.mysql.cj.jdbc.Driver
+    # 使用druid数据源
+    type: com.alibaba.druid.pool.DruidDataSource
+    druid:
+      initial-size: 5 #初始化大小
+      min-idle: 5 #最小连接数
+      max-active: 20 #最大连接数
+      max-wait: 60000 #配置获取连接等待超时的时间
+      pool-prepared-statements: true #是否缓存preparedStatement，也就是PSCache
+      max-pool-prepared-statement-per-connection-size: 20 #配置PSCache的大小
+      validation-query: SELECT 1 FROM DUAL #用来检测连接是否有效的sql，要求是一个查询语句，常用SELECT 1 FROM DUAL
+      validation-query-timeout: 3000 #检测连接是否有效的超时时间，单位是秒。底层调用jdbc Statement对象的void setQueryTimeout(int seconds)方法
+      test-on-borrow: false #申请连接时执行validationQuery检测连接是否有效，做了这个配置会降低性能
+      test-on-return: false #是否在归还到池中前进行检验
+      test-while-idle: true #是否在连接池空闲一段时间后检验连接有效性
+      time-between-eviction-runs-millis: 60000 #配置间隔多久才进行一次检测，检测需要关闭的空闲连接，单位是毫秒
+      min-evictable-idle-time-millis: 300000 #配置一个连接在池中最小生存的时间，单位是毫秒
+      max-evictable-idle-time-millis: 600000 #配置连接池中连接，在时间段内一直空闲，被逐出连接池的时间，单位毫秒。在minEvictableIdleTimeMillis基础上扩展，会在minEvictableIdleTimeMillis基础上判断连接是否空闲（默认逐出时间就是minEvictableIdleTimeMillis）
+      #max-open-prepared-statements: #和上面的等价
+      #   配置监控统计拦截的filters，去掉后监控界面sql无法统计，'wall'用于防火墙
+      #filters: stat,wall,log4j
+      use-global-data-source-stat: true #是否使用统计
+      connection-properties: druid.stat.mergeSql=true;druid.stat.slowSqlMillis=5000 #合并多个DruidDataSource的监控数据
+  data:
+    redis:
+      host: 127.0.0.1
+      port: 6379
+      password:
+      database: 0
+      #连接池最大链接数默认值为8
+      lettuce:
+        pool.max-active: 8
+        #连接池最大阻塞时间（使用负值表示没有限制）默认为-1
+        pool.max-wait: -1
+        #连接池中的最大空闲连接数 默认为8
+        pool.max-idle: 8
+        #连接池中的最小空闲连接数 默认为8
+        pool.min-idle: 0
+mybatis:
+  typeAliasesPackage: cn.lxinet.lfs.entity
+  mapperLocations: classpath:mybatis/*/*.xml
+mybatis-plus:
+  global-config:
+    #主键类型  0:"数据库ID自增", 1:"用户输入ID",2:"全局唯一ID (数字类型唯一ID)", 3:"全局唯一ID UUID";
+    id-type: 3
+    #字段策略 0:"忽略判断",1:"非 NULL 判断"),2:"非空判断"
+    field-strategy: 0
+    #驼峰下划线转换
+    db-column-underline: true
+    #刷新mapper 调试神器
+    refresh-mapper: true
+    #数据库大写下划线转换
+    capital-mode: true
+  configuration:
+    # 驼峰转换 从数据库列名到Java属性驼峰命名的类似映射
+    map-underscore-to-camel-case: true
+    # 是否开启缓存
+    cache-enable: false
+    # 如果查询结果中包含空值的列，则 MyBatis 在映射的时候，不会映射这个字段
+    #call-setters-on-nulls: true
+    # 打印sql
+    log-impl: org.apache.ibatis.logging.stdout.StdOutImpl
+config:
+  #目前生成token使用
+  app-id: YbcKSAlou6UREvkwJmTx
+  #目前生成token使用
+  app-secret: 95NmdotNX939f4gk7vTd3cHkMd8LhBcSzPn50G8c
+  #生成token有效期（秒）
+  token-expire: 14400
+  #回收站保留天数，超过天数自动彻底删除
+  trash-recycle-days: 30
+  video:
+    #视频水印，水印图片固定在位置：/resources/static/watermark.png
+    watermark:
+      #开启/关闭水印，true 开启，false 关闭
+      enable: true
+      #水印位置 TOP_LEFT 左上角，TOP_RIGHT 右上角，BOTTOM_LEFT 左下角，BOTTOM_RIGHT 右下角
+      location: TOP_LEFT
+      #x、y为对应4个角的距离，不能为负数，负数可能会报错
+      offset-x: 100
+      offset-y: 100
+  document:
+    watermark:
+      #开启/关闭水印，true 开启，false 关闭
+      enable: true
+      #开启水印加上当前时间
+      timeEnable: true
+      #时间格式，yyyy 年、MM 月、dd 日、HH 小时、mm 分钟、ss 秒
+      timeFormat: yyyy-MM-dd HH:mm:ss
+      #水印内容，如果开启时间，会在内容后面加上时间
+      content: 凌夕文件管理系统
+      #文字大小
+      fontSize: 12
+      #行距
+      rowSpace: 100
+      #列距
+      colSpace: 150
+      #透明度
+      alpha: 0.1
+  file-server:
+    #文件服务，local/minio，local本地文件服务，minio minio服务
+    type: local
+    local:
+      secret: e9eaa184ac1b4068829edb4f3ea978f4
+      # 防盗链st有效时长（秒）
+      st-effective-time: 300
+      file-dir: C:\yuanma\
+      preview-url: http://127.0.0.1:8918
+    minio:
+      access-key: YgiDKPslt8LKaUmQoRGs
+      secret-key: 91LmwQ9dJ910kef0vw8DvXiNEmpQclO96Dz8nP1v
+      url: http://127.0.0.1:9000
+      bucket-name: test
